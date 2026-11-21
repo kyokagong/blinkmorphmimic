@@ -1,0 +1,23 @@
+FROM wbwam-repro:latest AS media
+RUN python - <<'PY'
+from pathlib import Path
+import importlib.metadata as metadata
+import shutil, json
+names=('aiortc','av','aioice','cryptography','google-crc32c','pyee','pylibsrtp','pyopenssl','dnspython','ifaddr')
+output=Path('/tmp/media-deps'); output.mkdir()
+versions={}
+for name in names:
+    dist=metadata.distribution(name); site=Path(dist.locate_file('')).resolve()
+    versions[name]=dist.version
+    for entry in dist.files:
+        source=Path(dist.locate_file(entry)).resolve()
+        if not source.is_file() or not source.is_relative_to(site) or '__pycache__' in source.parts:
+            continue
+        target=output/source.relative_to(site)
+        target.parent.mkdir(parents=True,exist_ok=True)
+        shutil.copy2(source,target)
+(output/'blinkmorph-media-versions.json').write_text(json.dumps(versions,indent=2))
+PY
+FROM blinkmorphmimic:runtime-v7
+COPY --from=media /tmp/media-deps/ /opt/isaaclab-venv/lib/python3.12/site-packages/
+RUN python -c 'import aiortc,av; print(aiortc.__version__,av.__version__)'

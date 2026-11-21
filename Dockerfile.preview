@@ -1,0 +1,9 @@
+FROM blinkmorphmimic:webrtc-deps
+WORKDIR /workspace/blinkmorphmimic
+COPY preview ./preview
+COPY tests ./tests
+COPY scripts ./scripts
+COPY deploy/export_onnx.py ./deploy/export_onnx.py
+COPY pyproject.toml README.md THIRD_PARTY_NOTICES.md ./
+ENTRYPOINT []
+CMD ["bash", "scripts/serve.sh", "--help"]

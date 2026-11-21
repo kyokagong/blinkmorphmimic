@@ -1,0 +1,11 @@
+__pycache__/
+.pytest_cache/
+*.pyc
+.venv/
+runs/
+prepared/
+reports/
+cache/
+cache-*/
+exports/
+ops/private/

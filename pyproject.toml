@@ -1,0 +1,61 @@
+[build-system]
+requires = ["uv_build>=0.8.19,<0.13.0"]
+build-backend = "uv_build"
+
+[project]
+name = "blinkmorphmimic"
+version = "0.1.0"
+description = "Shared morphology-conditioned tracking for Q1, Bumi and G1"
+requires-python = ">=3.11,<3.14"
+license = "Apache-2.0"
+license-files = ["LICENSE", "MORPHMIMIC_LICENSE", "THIRD_PARTY_NOTICES.md"]
+dependencies = [
+  "mjlab==1.6.0",
+  "torch>=2.8.0",
+  "warp-lang>=1.14,<1.18",
+  "pyyaml",
+  "pandas",
+  "tyro>=1.0.1",
+  "tensorboard>=2.20.0",
+  "wandb>=0.22.3",
+  "torchrunx>=0.3.4",
+]
+
+[project.entry-points."mjlab.tasks"]
+morphmimic = "morphmimic"
+
+[dependency-groups]
+dev = ["ruff"]
+export = [
+    "onnx>=1.22.0",
+    "onnxruntime>=1.23.2",
+    "onnxscript>=0.7.0",
+]
+preview = [
+    "aiohttp>=3.12,<4",
+    "aiortc==1.15.0",
+    "av==17.1.0",
+]
+teleop = [
+    "pyzmq",
+    "msgpack",
+]
+
+[tool.uv.build-backend]
+module-name = "morphmimic"
+module-root = "src"
+
+[[tool.uv.index]]
+url = "https://pypi.org/simple"
+
+[[tool.uv.index]]
+name = "pytorch-cu128"
+url = "https://download.pytorch.org/whl/cu128"
+explicit = true
+
+[tool.uv.sources]
+torch = { index = "pytorch-cu128", marker = "sys_platform == 'linux'" }
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]

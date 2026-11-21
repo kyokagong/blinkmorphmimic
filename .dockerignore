@@ -1,0 +1,9 @@
+.git
+runs
+prepared
+reports
+exports
+cache*
+__pycache__
+.pytest_cache
+ops/private

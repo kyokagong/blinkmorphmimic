@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><link rel="icon" href="data:,"><meta name="viewport" content="width=device-width, initial-scale=1"><title>BlinkMorphMimic · Physical motion preview</title><link rel="stylesheet" href="/style.css"><script src="/app.js" defer></script></head>
+<body>
+<header><p>BlinkMorphMimic / shared policy</p><h1>看策略真正跳起来</h1><p>训练策略驱动物理仿真；单本体和三本体同屏使用相同的固定检查点。</p></header>
+<main>
+<section class="viewer" aria-label="物理仿真视频">
+  <div class="viewer-heading"><p id="active">当前运行：尚未载入</p><button id="reconnect" type="button">重连视频</button></div>
+  <div class="screen"><video id="frame" autoplay muted playsinline aria-label="训练策略驱动的机器人实时物理仿真"></video><p id="empty">选择模式和动作，再点击「载入动作」。</p></div>
+  <div class="viewer-info"><p id="runtime" role="status">正在连接状态服务…</p><p id="legend">实色：实际策略与物理。半透明：参考目标。</p><p id="physics-stats">物理与渲染速率：等待会话</p><p id="connection" role="status">WebRTC：正在连接…</p><p id="stream-stats">接收 / 解码帧率：等待视频统计</p></div>
+</section>
+<aside>
+  <label for="release">模型</label><select id="release" aria-label="固定 checkpoint 版本"><option value="">正在读取已发布模型…</option></select>
+  <p id="release-note" class="note">人体输入为离线原始人体动作；PICO 现场接入需要部署标定。</p>
+  <label for="human-points">人体输入点位</label><select id="human-points" disabled><option value="five">五点 · 骨盆、双腕、双踝</option><option value="full">全部有效关节 · SEED 24 / LAFAN1 16</option></select>
+  <label for="mode">预览模式</label><select id="mode"><option value="single">单本体 · 策略与参考</option><option value="compare">三本体同屏 · 实际策略</option></select>
+  <label for="robot">本体</label><select id="robot"><option value="q1">Q1 · 22 关节</option><option value="bumi">Bumi · 21 关节</option><option value="g1">G1 · 29 关节</option></select>
+  <section id="pico-panel" aria-label="PICO 录制">
+    <button id="pico-upload" type="button">上传 PICO 数据</button>
+    <input id="pico-file" type="file" accept=".jsonl,application/x-ndjson" hidden>
+    <p id="pico-status" class="note" role="status">支持 PICO 五点 JSONL，最大 32 MB、10 分钟。</p>
+    <label for="pico-recordings">PICO 录制列表</label>
+    <select id="pico-recordings" size="4" aria-label="已上传的 PICO 录制"></select>
+    <button id="pico-load" type="button" disabled>载入选中 PICO 录制</button>
+    <p class="note">选择 Human 模型后载入；采用首帧相对姿态标定。上传完成后保留记录。</p>
+  </section>
+  <label for="standup-pose">起身初始姿态</label><select id="standup-pose"><option value="lying">躺卧</option><option value="seated">坐姿</option><option value="half_squat">半蹲</option></select>
+  <button id="standup" type="button" disabled>站起来：载入姿态</button>
+  <p class="note">载入后先查看初始姿态，再点击「播放」。从选定的 LAFAN1 姿态开始，策略尝试起身并继续跟踪；「重置」返回同一初始姿态。优先使用当前已发布模型。支持单本体与三本体同屏；失败会停止并显示原因。</p>
+  <div id="motiondecode-actions" hidden>
+    <p class="note">MotionDecode 动作</p>
+    <div class="buttons"><button id="motiondecode-baji" type="button">八极拳（baji）</button><button id="motiondecode-dance" type="button">舞蹈（dance）</button></div>
+  </div>
+  <div id="flip-actions" hidden><p class="note">BONES-SEED 翻转动作 · 实际策略与物理，完成情况以评测为准。</p><button id="flips" type="button">翻转动作（flips）</button></div>
+  <label for="search">搜索动作</label><input id="search" type="search" placeholder="动作名称 / 来源" autocomplete="off">
+  <label for="motions">动作</label><select id="motions" size="10" aria-label="可用动作"></select><p id="count"></p>
+  <p class="note">选项变更后点击「载入动作」，才会切换当前会话。同屏仅列出三本体共有的同源动作。</p>
+  <div class="buttons"><button id="select" type="button">载入动作</button><button id="start" type="button">播放</button><button id="pause" type="button">暂停</button><button id="reset" type="button">重置</button></div>
+  <p id="error" role="alert"></p>
+  <h2>当前仿真</h2><p id="progress">尚未载入</p><p id="failure" role="status">—</p><div id="participants" aria-label="各本体物理状态"></div>
+  <details><summary>来源与模型详情</summary><dl><dt>动作来源</dt><dd id="source">—</dd><dt>固定检查点</dt><dd id="checkpoint">—</dd><dt>训练迭代</dt><dd id="iteration">—</dd><dt>数据标识</dt><dd id="identity">—</dd></dl></details>
+  <p class="note">所有观看者共享一个仿真会话，控制会影响所有人。同屏按共同主体时段同步，不能替代完整片段评测。模型已评测，动作可能失败。</p>
+</aside>
+</main>
+</body></html>
