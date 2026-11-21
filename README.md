@@ -1,12 +1,12 @@
 # BlinkMorphMimic
 
-The live preview now uses the EMA checkpoint from the **random-initialized 0→5000 optimization experiment**, with synchronized Q1/Bumi/G1 at **1280×720**. Both optimization and Adam baseline runs used **2048 environments per GPU**, without earlier learned checkpoints. See [current results, curves and measured limits](docs/random-5000-results.md). Earlier 30,000-iteration and 1080p records remain historical evidence.
+Shared Q1/Bumi/G1 motion tracking with authentic paired human five-point input. The local `prepared/current.json` selects the corrected in-place recovery corpus and the 20000 checkpoint release catalog; verify live identity through `/api/status`. See [results and limits](docs/results.md).
 
 The single-user preview keeps independent NVENC encoding; multi-viewer shared encoding was cancelled.
 
 Shared morphology-conditioned world model and tracking policy for Q1 (22 native joints), Bumi V3 (21), and Unitree G1 (29). Built from the pinned official MorphMimic core with sparse29-joint mappings, explicit154-dimensional morphology/mask descriptors, policyEMA, optionalMuon, source-level data splits, and actual-policy online simulation.
 
-Execution and limitations: [documentation archive](docs/README.md), [actual implementation](docs/implementation.md), [training/evaluation](docs/training-evaluation.md), [runtime/recovery](docs/runtime.md).
+Design and limitations: [documentation](docs/README.md), [actual implementation](docs/design.md), [training/evaluation](docs/training-evaluation.md), [runtime/recovery](docs/deployment.md).
 
 ## Runtime
 
@@ -93,11 +93,11 @@ Policies remain simulation policies, without hardware closed-loop qualification.
 
 The completed experiment jointly trains motion and authentic human five-point interfaces using BONES-SEED/LAFAN1; MotionDecode is motion-only because matching human sources were not found. Muon is active for hidden matrices of the world model and both policy interfaces; excluded layers and critics use Adam. Native actuator delay is enabled in training. Policies are not qualified for hardware.
 
-Optional modes and their separate qualification limits: [native controller model](docs/controller-aware-native-v1.md), [single-GPU multi-robot training](docs/single-gpu-training.md). Neither mode was used by the completed random 5000/2048 comparison.
+Optional modes and their separate qualification limits: [native controller model](docs/design.md), [single-GPU multi-robot training](docs/design.md). Neither mode was used by the completed random 5000/2048 comparison.
 
 ## Preview
 
-See [preview instructions](preview/README.md). Only fixed checkpoints may be selected. The server uses the same trained policy, history, observations, native action mapping and physics environment as training; reference ghost and actual policy are distinct. The public simulation defaults to the fixed random-initialized 5000-iteration EMA release: [open preview](http://1.94.0.106:31769/). All 252 matched checkpoint evaluations are complete; [results and downloadable curves](docs/random-5000-results.md) include both improvements and remaining drift. Earlier releases stay selectable. See the [historical 15k–30k chart](docs/training-milestones-15000-30000.md) for that separate experiment.
+See [preview instructions](preview/README.md). Only fixed checkpoints may be selected. The server uses the same trained policy, history, observations, native action mapping and physics environment as training; reference ghost and actual policy are distinct. The configured release and checkpoint identity must be checked against `prepared/current.json` and the running service: [open preview](http://1.94.0.106:31769/). All 252 matched checkpoint evaluations are complete; [results and artifact locations](docs/results.md) include both improvements and remaining drift. Available releases are defined by the pinned catalog. See the [historical experiment summary](docs/results.md) for the separate 15k–30k run.
 
 ## Attribution
 
